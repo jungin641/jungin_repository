@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>Socket.io</title>
+		
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+		
+		<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		
+		<style>
+			
+			#content div {
+
+				margin: 10px;
+				padding: 10px 20px;
+				border-color: #eee;
+				border-radius: 5px;
+				background-color: white;
+				box-shadow: 10px 10px 5px #eee;
+			}
+			
+			.message {
+				
+				font-size: 1.1em;
+				color: #aaa;
+			}
+			
+			.timestamp {
+				
+				font-size: 0.65em;
+				color: #ddd;
+			}
+			
+		</style>
+		
+		<script>
+			
+			$(document).ready(function () {
+			
+				var socket = io.connect();
+				socket.on('message', function (message) {
+					
+					var output = '';
+					
+					output += '<div>';
+					output += 		'<h3 class="message">' + message.message + '</h3>';
+					output += 		'<h3 class="timestamp">' + message.date + '</h3>';
+					output += '</div>';
+					
+					$(output).prependTo('#content');
+					$('#content').listview('refresh');
+				});
+				
+				$('button').click(function () {
+				
+					var message = $('#message').val();
+					
+					socket.emit('message', {
+						
+						message : message,
+						date : new Date().toUTCString()
+					});
+					
+					$('#message').val("");
+				});
+			});
+			
+		</script>
+		
+	</head>
+
+	<body>
+		
+		<div class="pure-form">
+			
+			<input id="message" class="pure-input-1">
+			<button class="pure-button pure-button-primary" style="width: 100%;">Send</button>
+
+		</div>
+		
+		<div id="content"></div>
+		
+	</body>
+	
+</html>
